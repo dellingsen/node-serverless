@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta charset="UTF-8">
+	<base href="/">
+
+	<title>Serverless App</title>
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
+	<!-- AWS API Generated SDK -->
+	<script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+	<script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+	<script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+	<script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+	<script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+	<script type="text/javascript" src="lib/url-template/url-template.js"></script>
+	<script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+	<script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+	<script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+	<script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+	<script type="text/javascript" src="apigClient.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+	<div>		    
+		<table class="table" id="serverlessTable" border="1">
+		   <tbody></tbody>
+		</table>
+	</div>
+	
+	<button type="button" id="userButton" onclick="createUser()">Create User</button>
+    New user: (username) &nbsp; <input type="text" id="username"/>
+</div>
+
+
+<script>
+var apigClient = apigClientFactory.newClient();
+
+var params = {
+    //This is where any header, path, or querystring request params go. The key is the parameter named as defined in the API
+    //param0: '',
+    //param1: ''
+};
+
+var body = {
+    //This is where you define the body of the request
+};
+var postBody = {
+	username: ""
+};
+
+var additionalParams = {
+    //If there are any unmodeled query parameters or headers that need to be sent with the request you can add them here
+	/*
+    headers: {
+        param0: '',
+        param1: ''
+    },
+    queryParams: {
+        param0: '',
+        param1: ''
+    }
+	*/
+};
+
+var $serverlessTbody = $("#serverlessTable tbody");
+
+function getUsers() {
+apigClient.usersGet(params, body, additionalParams)
+    .then(function(result){
+		var tableData = "";
+	    tableData += "<tr><td>Users</td></tr>";
+		for(var i = 0; i < result.data.message.length; i++){
+            tableData += "<tr style='background-color:#F0F0F0'><td>" + result.data.message[i].username + "</td></tr>";
+        }
+
+		$serverlessTbody.html(tableData);
+	    document.getElementById("serverlessTable").style.display="table";
+		
+    }).catch( function(result){
+		console.log("error result: ");
+		console.log(result);
+    });
+}
+
+function createUser() {
+  var newUsername = document.getElementById("username");
+  postBody.username = newUsername.value;
+  apigClient.userPost(params, postBody, additionalParams)
+    .then(function(result){
+		console.log(result.data.message);
+		newUsername.value = "";
+		getUsers();		
+    }).catch( function(result){
+		console.log("createUser error result: ");
+		console.log(result.data.message);
+    });
+}	
+
+getUsers();
+
+</script>
+
+</body>
+
+</html>

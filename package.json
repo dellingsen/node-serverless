@@ -1,0 +1,20 @@
+{
+  "name": "myserverless",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.1.0",
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.2.0",
+    "joi": "^9.2.0",
+    "morgan": "~1.6.1"
+  },
+  "main": "app.js",
+  "author": "dellingsen",
+  "license": "ISC",
+  "description": ""
+}
